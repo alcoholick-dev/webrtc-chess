@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>WebRTC Chess</title>
-	<script src="/chess.min.js"></script>
+	<script src="/webrtc-chess/chess.min.js"></script>
 	<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
 		integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
@@ -46,7 +46,7 @@
 </head>
 <body>
 	<script type="module">
-		import {joinRoom, selfId} from '/trystero.min.js';
+		import {joinRoom, selfId} from '/webrtc-chess/trystero.min.js';
 		window.onload = async () => {
 			const effect = new Audio('/img/effect.mp3');
 			const room = joinRoom({appId: 'michael-chess-app-dcb25a3c-7064-40f8-aef7-593ca98b3e3c'}, 'f50782ab-81f7-4f84-84c3-02a40dd52df6');
@@ -102,7 +102,7 @@
 					handler.className = 'option';
 					for (const p of ['r', 'n', 'b', 'q']) {
 						const option = document.createElement('button');
-						option.innerHTML = `<img src="/img/chesspieces/wikipedia/${color[0]}${p.toLocaleUpperCase()}.png"></img>`;
+						option.innerHTML = `<img src="/webrtc-chess/img/chesspieces/wikipedia/${color[0]}${p.toLocaleUpperCase()}.png"></img>`;
 						option.onclick = () => {
 							parentBoard.removeChild(handler);
 							const myMove = {
@@ -123,6 +123,9 @@
 				draggable: true,
 				position: 'start',
 				orientation: color,
+				pieceTheme(piece) {
+					return `/webrtc-chess/img/chesspieces/wikipedia/${piece}.png`;
+				},
 				async onDrop(source, target, piece, newPos, oldPos, ...iters) {
 					const canPromote = promotegram[piece[0]] == target[1];
 					if (canPromote) {
