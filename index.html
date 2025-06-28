@@ -139,8 +139,8 @@
 							from: source,
 							to: target
 						};
-						game.move(myMove);
-						_sendMove(myMove, systemId);
+						const isOk = game.move(myMove);
+						if (isOk) _sendMove(myMove, systemId);
 						return true;
 					} catch (err) {
 						return false;
