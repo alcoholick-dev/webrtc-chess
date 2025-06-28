@@ -128,7 +128,7 @@
 					return `/webrtc-chess/img/chesspieces/wikipedia/${piece}.png`;
 				},
 				async onDrop(source, target, piece, newPos, oldPos, ...iters) {
-					const canPromote = promotegram[piece[0]] == target[1];
+					const canPromote = piece[1].toLocaleUpperCase() === 'P' && promotegram[piece[0]] == target[1];
 					if (canPromote) {
 						if (!game.moves({verbose: true}).some(({from, to}) => from == source && to == target)) return;
 						await handlePromote(source, target);
