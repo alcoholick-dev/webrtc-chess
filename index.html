@@ -50,7 +50,10 @@
 		import {joinRoom, selfId} from '/webrtc-chess/trystero-nostr.min.js';
 		window.onload = async () => {
 			const effect = new Audio('/webrtc-chess/img/effect.mp3');
-			const room = joinRoom({appId: 'michael-chess-app-dcb25a3c-7064-40f8-aef7-593ca98b3e3c'}, 'f50782ab-81f7-4f84-84c3-02a40dd52df6');
+			const room = joinRoom({
+				appId: 'michael-chess-app-dcb25a3c-7064-40f8-aef7-593ca98b3e3c',
+				relayUrls: ['wss://relay.nostr.hu/']
+			}, 'f50782ab-81f7-4f84-84c3-02a40dd52df6');
 			let systemId = '';
 			async function* handleColor() {
 				const options = ['r', 'p', 's'];
