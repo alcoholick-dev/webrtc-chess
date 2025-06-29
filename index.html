@@ -52,6 +52,13 @@
 			const effect = new Audio('/webrtc-chess/img/effect.mp3');
 			const room = joinRoom({
 				appId: 'michael-chess-app-dcb25a3c-7064-40f8-aef7-593ca98b3e3c',
+				turnConfig: [
+					{
+						urls: ['turn:51.79.146.75:5349', 'stun:51.79.146.75:3478'],
+						username: 'dino',
+						credential: 'albino'
+					},
+				],
 			}, 'f50782ab-81f7-4f84-84c3-02a40dd52df6');
 			let systemId = '';
 			async function* handleColor() {
