@@ -48,16 +48,64 @@
 <body>
 	<script type="module">
 		import {joinRoom, selfId} from '/webrtc-chess/trystero-mqtt.min.js';
+
+		async function base64ToArrayBuffer(b64) {
+			const bin = atob(b64);
+			const len = bin.length;
+			const buf = new Uint8Array(len);
+			for (let i = 0; i < len; i++) buf[i] = bin.charCodeAt(i);
+			return buf.buffer;
+		}
+
+		async function decrypt(key, payload) {
+			const KEY_LEN = 32;
+			const ALGO = 'AES-GCM';
+
+			const keyBuf = await base64ToArrayBuffer(key);
+			if (keyBuf.byteLength !== KEY_LEN) {
+				throw new Error('masterKey must be 32 bytes (base64-encoded)');
+			}
+
+			const ivBuf = new Uint8Array(await base64ToArrayBuffer(payload.iv));
+			const ctBuf = new Uint8Array(await base64ToArrayBuffer(payload.ciphertext));
+			const tagBuf = new Uint8Array(await base64ToArrayBuffer(payload.tag));
+
+			const combined = new Uint8Array(ctBuf.length + tagBuf.length);
+			combined.set(ctBuf, 0);
+			combined.set(tagBuf, ctBuf.length);
+
+			const cryptoKey = await crypto.subtle.importKey(
+				'raw',
+				keyBuf,
+				{ name: ALGO },
+				false,
+				['decrypt']
+			);
+
+			const plainBuf = await crypto.subtle.decrypt(
+				{ name: ALGO, iv: ivBuf, tagLength: 128 },
+				cryptoKey,
+				combined.buffer
+			);
+
+			const dec = new TextDecoder();
+			return dec.decode(plainBuf);
+		}
+
 		window.onload = async () => {
+			
 			const effect = new Audio('/webrtc-chess/img/effect.mp3');
 			const room = joinRoom({
 				appId: 'michael-chess-app-dcb25a3c-7064-40f8-aef7-593ca98b3e3c',
 				rtcConfig: {
 					iceServers: [
 						{
-							urls: ['turn:51.79.146.75:3478'],
-							username: 'dino',
-							credential: 'albino'
+							urls: ['turn:1xoxshf.257.cz:3478'],
+							...JSON.parse(await decrypt('dfGHBn6y+efs/KewqK35WwBJ1AT4jzFOrkNHTb8El3s=', {
+								iv: 'S1uthG23SvdgvThn',
+								ciphertext: 'F7B9jtXqLBZKAmp1ptHzTizsQA3AlwvOH7j7vgYiLmc3BR7l8g225WtShR7v07hbYaxpPdNfQKKKp7dsvb4=',
+								tag: '5qsE+oIAHUtCaBQgBQzWHQ=='
+							}))
 						},
 						{
 							urls: ['stun:stun.nextcloud.com:3478']
